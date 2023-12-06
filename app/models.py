@@ -67,6 +67,12 @@ class User(UserMixin, db.Model):
             {'reset_password': self.id, 'exp': time() + expires_in},
             app.config['SECRET_KEY'], algorithm='HS256')
 
+    def notFollowedPosts(self):
+        followed = Post.query.join(followers , (followers.c.followed_id == Post.user_id)).filter(
+            followers.c.followed_id == self.id).union(self.posts)
+        all_ = Post.query.filter_by()
+        return all_.except_(followed).order_by(Post.timestamp.desc())
+
     @staticmethod
     def verify_reset_password_token(token):
         try:

@@ -43,7 +43,7 @@ def index():
 @login_required
 def explore():
     page = request.args.get('page', 1, type=int)
-    posts = Post.query.order_by(Post.timestamp.desc()).paginate(
+    posts = current_user.notFollowedPosts().paginate(
         page=page, per_page=app.config['POSTS_PER_PAGE'], error_out=False)
     next_url = url_for('explore', page=posts.next_num) \
         if posts.has_next else None
@@ -55,6 +55,7 @@ def explore():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    BgUrl = 'https://image.spreadshirtmedia.com/image-server/v1/compositions/T23A2PA3989PT17X29Y1D1031371832W25288H30345/views/1,width=550,height=550,appearanceId=2,backgroundColor=000000,noPt=true/its-all-ohio-meme-mens-longsleeve-shirt.jpg'
     if current_user.is_authenticated:
         return redirect(url_for('index'))
     form = LoginForm()

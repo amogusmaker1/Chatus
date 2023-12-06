@@ -1,9 +1,9 @@
 {% extends 'bootstrap/base.html' %}
-{% block body_attribs %}
-style="background-image: url("https://i.pinimg.com/originals/16/32/a5/1632a53913bc367afdcf29a482d5bba9.jpg");background-size: contain;"
-{% endblock %}
 {% block title %}
     {% if title %}{{ title }} - Chatus{% else %}Welcome to Chatus{% endif %}
+{% endblock %}
+{% block body_attribs %}
+style="background-image: url('https://i.ytimg.com/vi/xzy_0m7jwRw/maxresdefault.jpg');background-size: cover; background-repeat: no-repeat;"
 {% endblock %}
 {% block navbar %}
     <nav class="navbar navbar-default">
@@ -36,6 +36,7 @@ style="background-image: url("https://i.pinimg.com/originals/16/32/a5/1632a53913
 {% endblock %}
 
 {% block content %}
+
     <div class="container">
         {% with messages = get_flashed_messages() %}
         {% if messages %}
