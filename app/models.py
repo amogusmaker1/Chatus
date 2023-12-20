@@ -7,6 +7,7 @@ import jwt
 from app import app, db, login
 
 
+
 followers = db.Table(
     'followers',
     db.Column('follower_id', db.Integer, db.ForeignKey('user.id')),
@@ -40,7 +41,7 @@ class User(UserMixin, db.Model):
 
     def avatar(self, size):
         digest = md5(self.email.lower().encode('utf-8')).hexdigest()
-        return 'https://www.gravatar.com/avatar/{}?d=identicon&s={}'.format(
+        return 'https://www.gravatar.com/avatar/{}?s={}&d=https%3A%2F%2Fi.pinimg.com%2F564x%2Fc0%2Fa7%2Fa6%2Fc0a7a613e35143a9606521beee386ccf.jpg'.format(
             digest, size)
 
     def follow(self, user):
