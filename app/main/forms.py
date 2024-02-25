@@ -1,14 +1,17 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField,SubmitField, \
-    TextAreaField
+    TextAreaField,FileField
 from wtforms.validators import ValidationError, DataRequired, \
     Length
 from app.models import User
+from flask_wtf.file import FileAllowed
+
 
 class EditProfileForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     about_me = TextAreaField('About me', validators=[Length(min=0, max=140)])
     age = StringField('Age', validators=[DataRequired()])
+    profile = FileField("Profile Picture", validators=[FileAllowed(['jpg', 'png', 'gif'], "Nur Bilder du linksversifter!")])
     submit = SubmitField('Submit')
 
     def __init__(self, original_username, *args, **kwargs):
@@ -28,4 +31,11 @@ class EmptyForm(FlaskForm):
 
 class PostForm(FlaskForm):
     post = TextAreaField('Say something', validators=[DataRequired()])
+    image = FileField("Post an Image")
     submit = SubmitField('Submit')
+
+class ComForm(FlaskForm):
+    compost = TextAreaField('Lasse deine geistigen Ergüsse ab', validators=[DataRequired()])
+    comimage = FileField("Bild hin stampfen")
+    comsubmit = SubmitField('Mit einer Brieftaube verschicken')
+

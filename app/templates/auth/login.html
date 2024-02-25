@@ -9,9 +9,9 @@
         </div>
     </div>
     <br>
-    <p>Neuer Benutzer (Kein OG)? <a href="{{ url_for('register') }}">Registrieren!</a></p>
+    <p>Neuer Benutzer (Kein OG)? <a href="{{ url_for('auth.register') }}">Registrieren!</a></p>
     <p>
         Hast du dein Passwort vergessen du Stück Birne du anti Sigmer?
-        <a href="{{ url_for('reset_password_request') }}">Passwort Zurücksetzen</a>
+        <a href="{{ url_for('auth.reset_password_request') }}">Passwort Zurücksetzen</a>
     </p>
 {% endblock %}

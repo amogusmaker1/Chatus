@@ -1,12 +1,13 @@
 from datetime import datetime
-from flask import render_template, flash, redirect, url_for, request
+from flask import render_template, flash, redirect, url_for, request, current_app, Response
 from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.urls import url_parse
 from app import db
-from app.main.forms import  EditProfileForm, EmptyForm, PostForm
+from app.main.forms import  EditProfileForm, EmptyForm, PostForm, ComForm
 from app.models import User, Post
 from app.auth.email import send_password_reset_email
 from app.main import Bp
+
 
 
 @Bp.before_app_request
@@ -23,16 +24,19 @@ def index():
     form = PostForm()
     if form.validate_on_submit():
         post = Post(body=form.post.data, author=current_user)
+        if form.image.data:
+            post.image = form.image.data.read()
+            post.fileType = form.image.data.mimetype
         db.session.add(post)
         db.session.commit()
         flash('Your post is now live!')
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
     page = request.args.get('page', 1, type=int)
     posts = current_user.followed_posts().paginate(
-        page=page, per_page=app.config['POSTS_PER_PAGE'], error_out=False)
-    next_url = url_for('index', page=posts.next_num) \
+        page=page, per_page=current_app.config['POSTS_PER_PAGE'], error_out=False)
+    next_url = url_for('main.index', page=posts.next_num) \
         if posts.has_next else None
-    prev_url = url_for('index', page=posts.prev_num) \
+    prev_url = url_for('main.index', page=posts.prev_num) \
         if posts.has_prev else None
     return render_template('index.html', title='Home', form=form,
                            posts=posts.items, next_url=next_url,
@@ -44,10 +48,10 @@ def index():
 def explore():
     page = request.args.get('page', 1, type=int)
     posts = current_user.notFollowedPosts().paginate(
-        page=page, per_page=app.config['POSTS_PER_PAGE'], error_out=False)
-    next_url = url_for('explore', page=posts.next_num) \
+        page=page, per_page=current_app.config['POSTS_PER_PAGE'], error_out=False)
+    next_url = url_for('main.explore', page=posts.next_num) \
         if posts.has_next else None
-    prev_url = url_for('explore', page=posts.prev_num) \
+    prev_url = url_for('main.explore', page=posts.prev_num) \
         if posts.has_prev else None
     return render_template('index.html', title='Explore', posts=posts.items,
                            next_url=next_url, prev_url=prev_url)
@@ -58,10 +62,10 @@ def user(username):
     user = User.query.filter_by(username=username).first_or_404()
     page = request.args.get('page', 1, type=int)
     posts = user.posts.order_by(Post.timestamp.desc()).paginate(
-        page=page, per_page=app.config['POSTS_PER_PAGE'], error_out=False)
-    next_url = url_for('user', username=user.username, page=posts.next_num) \
+        page=page, per_page=current_app.config['POSTS_PER_PAGE'], error_out=False)
+    next_url = url_for('main.user', username=user.username, page=posts.next_num) \
         if posts.has_next else None
-    prev_url = url_for('user', username=user.username, page=posts.prev_num) \
+    prev_url = url_for('main.user', username=user.username, page=posts.prev_num) \
         if posts.has_prev else None
     form = EmptyForm()
     return render_template('user.html', user=user, posts=posts.items,
@@ -76,9 +80,12 @@ def edit_profile():
         current_user.username = form.username.data
         current_user.about_me = form.about_me.data
         current_user.age = form.age.data
+        if form.profile.data:
+            current_user.avatarius = form.profile.data.read()
+            current_user.fileType = form.profile.data.mimetype
         db.session.commit()
         flash('Your changes have been saved.')
-        return redirect(url_for('edit_profile'))
+        return redirect(url_for('main.edit_profile'))
     elif request.method == 'GET':
         form.username.data = current_user.username
         form.about_me.data = current_user.about_me
@@ -95,16 +102,16 @@ def follow(username):
         user = User.query.filter_by(username=username).first()
         if user is None:
             flash('User {} not found.'.format(username))
-            return redirect(url_for('index'))
+            return redirect(url_for('main.index'))
         if user == current_user:
             flash('You cannot follow yourself!')
-            return redirect(url_for('user', username=username))
+            return redirect(url_for('main.user', username=username))
         current_user.follow(user)
         db.session.commit()
         flash('You are following {}!'.format(username))
-        return redirect(url_for('user', username=username))
+        return redirect(url_for('main.user', username=username))
     else:
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
 
 
 @Bp.route('/unfollow/<username>', methods=['POST'])
@@ -115,13 +122,33 @@ def unfollow(username):
         user = User.query.filter_by(username=username).first()
         if user is None:
             flash('User {} not found.'.format(username))
-            return redirect(url_for('index'))
+            return redirect(url_for('main.index'))
         if user == current_user:
             flash('You cannot unfollow yourself!')
-            return redirect(url_for('user', username=username))
+            return redirect(url_for('main.user', username=username))
         current_user.unfollow(user)
         db.session.commit()
         flash('You are not following {}.'.format(username))
-        return redirect(url_for('user', username=username))
+        return redirect(url_for('main.user', username=username))
     else:
-        return redirect(url_for('index'))
+        return redirect(url_for('main.index'))
+
+@Bp.route('/avatar/<user_id>')
+@login_required
+def avatar(user_id):
+    user = User.query.get(int(user_id))
+    image = user.avatarius
+    mimetype = user.fileType
+    return Response(image, mimetype=mimetype)
+
+@Bp.route('/postimg/<post_id>')
+@login_required
+def postimg(post_id):
+    post = Post.query.get(int(post_id))
+    image = post.image
+    fileType = post.fileType
+    return Response(image, mimetype=fileType)
+@Bp.route('/post/<post_id>', methods=['POST', 'GET'])
+@login_required
+def compost(post_id):
+    post = Post.query.filter_by(id = int(post_id)).first_or_404()
