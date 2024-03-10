@@ -30,9 +30,10 @@ class EmptyForm(FlaskForm):
 
 
 class PostForm(FlaskForm):
-    post = TextAreaField('Say something', validators=[DataRequired()])
-    image = FileField("Post an Image")
-    submit = SubmitField('Submit')
+    post = TextAreaField('Sag irgendwas', validators=[DataRequired()])
+    hashtags = StringField('Coole Hashtags(mit leertaste einen neuen Hashtag schreiben)')
+    image = FileField("Postiere ein Bild")
+    submit = SubmitField('Mit Brieftaube versenden')
 
 class ComForm(FlaskForm):
     compost = TextAreaField('Lasse deine geistigen Ergüsse ab', validators=[DataRequired()])

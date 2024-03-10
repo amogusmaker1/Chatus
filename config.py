@@ -7,10 +7,10 @@ class Config(object):
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
         'sqlite:///' + os.path.join(basedir, 'app.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    MAIL_SERVER = os.environ.get('MAIL_SERVER')
-    MAIL_PORT = int(os.environ.get('MAIL_PORT') or 25)
+    MAIL_SERVER = os.environ.get('MAIL_SERVER') or "smtp.mail.ru"
+    MAIL_PORT = int(os.environ.get('MAIL_PORT') or 465)
     MAIL_USE_TLS = os.environ.get('MAIL_USE_TLS') is not None
-    MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
-    MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD') or 'kaTBt5eG1W7YPENxgj3B'
+    MAIL_USERNAME = os.environ.get('MAIL_USERNAME') or "adm.mikrobloga@mail.ru"
+    MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD') or 'TuhJ91Sfvhw1jCY3isvg'
     ADMINS = ['adm.mikrobloga@mail.ru']
-    POSTS_PER_PAGE = 25
+    POSTS_PER_PAGE = 10

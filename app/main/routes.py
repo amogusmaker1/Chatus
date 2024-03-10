@@ -27,6 +27,8 @@ def index():
         if form.image.data:
             post.image = form.image.data.read()
             post.fileType = form.image.data.mimetype
+        if form.hashtags.data:
+            post.hashtags = form.hashtags.data
         db.session.add(post)
         db.session.commit()
         flash('Your post is now live!')
@@ -56,9 +58,21 @@ def explore():
     return render_template('index.html', title='Explore', posts=posts.items,
                            next_url=next_url, prev_url=prev_url)
 
-@Bp.route('/user/<username>')
+@Bp.route('/user/<username>', methods=['GET', 'POST'])
 @login_required
 def user(username):
+    form2 = PostForm()
+    if form2.validate_on_submit():
+        post = Post(body=form2.post.data, author=current_user)
+        if form2.image.data:
+            post.image = form2.image.data.read()
+            post.fileType = form2.image.data.mimetype
+        if form2.hashtags.data:
+            post.hashtags = form2.hashtags.data
+        db.session.add(post)
+        db.session.commit()
+        flash('Your post is now live!')
+        return redirect(url_for('main.index'))
     user = User.query.filter_by(username=username).first_or_404()
     page = request.args.get('page', 1, type=int)
     posts = user.posts.order_by(Post.timestamp.desc()).paginate(
@@ -69,7 +83,7 @@ def user(username):
         if posts.has_prev else None
     form = EmptyForm()
     return render_template('user.html', user=user, posts=posts.items,
-                           next_url=next_url, prev_url=prev_url, form=form)
+                           next_url=next_url, prev_url=prev_url, form=form, form2=form2)
 
 
 @Bp.route('/edit_profile', methods=['GET', 'POST'])

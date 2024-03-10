@@ -101,6 +101,10 @@ class Post(db.Model):
     image = db.Column(db.Text)
     fileType = db.Column(db.Text)
     coms = db.relationship('Com', backref='compost', lazy='dynamic')
+    hashtags = db.Column(db.String(187), index=True)
+
+    def hashtag(self, hashhtag):
+        return hashhtag in self.hashtags
 
 
     def __repr__(self):
@@ -113,6 +117,7 @@ class Com(db.Model):
     compost_id = db.Column(db.Integer, db.ForeignKey('post.id'))
     comimage = db.Column(db.Text)
     comfileType = db.Column(db.Text)
+    comauthor_id = db.Column(db.Integer, index=True)
 
     def __repr__(self):
         return '<Com {}>'.format(self.combody)

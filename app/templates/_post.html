@@ -1,4 +1,4 @@
-    <table class="table table-hover">
+    <table class="table table-hover" frame="below" bordercolor="#B2B2B2">
         <tr>
             <td width="70px">
                 <a href="{{ url_for('main.user', username=post.author.username) }}">
@@ -19,8 +19,12 @@
                 {{ post.body }}
                 <br>
                 {% if post.image %}
-                <img src="{{ url_for('main.postimg', post_id = post.id) }}">
+                <img src="{{ url_for('main.postimg', post_id = post.id) }}" width="512px">
                 {% endif %}
+            </td>
+            <td>
+                hashtags
             </td>
         </tr>
     </table>
+
