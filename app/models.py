@@ -7,8 +7,6 @@ import jwt
 from app import db, login
 from flask import current_app
 
-
-
 followers = db.Table(
     'followers',
     db.Column('follower_id', db.Integer, db.ForeignKey('user.id')),
@@ -32,7 +30,6 @@ class User(UserMixin, db.Model):
         primaryjoin=(followers.c.follower_id == id),
         secondaryjoin=(followers.c.followed_id == id),
         backref=db.backref('followers', lazy='dynamic'), lazy='dynamic')
-
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
@@ -63,7 +60,7 @@ class User(UserMixin, db.Model):
     def followed_posts(self):
         followed = Post.query.join(
             followers, (followers.c.followed_id == Post.user_id)).filter(
-                followers.c.follower_id == self.id)
+            followers.c.follower_id == self.id)
         own = Post.query.filter_by(user_id=self.id)
         return followed.union(own).order_by(Post.timestamp.desc())
 
@@ -73,7 +70,7 @@ class User(UserMixin, db.Model):
             current_app.config['SECRET_KEY'], algorithm='HS256')
 
     def notFollowedPosts(self):
-        followed = Post.query.join(followers , (followers.c.followed_id == Post.user_id)).filter(
+        followed = Post.query.join(followers, (followers.c.followed_id == Post.user_id)).filter(
             followers.c.followed_id == self.id).union(self.posts)
         all_ = Post.query.filter_by()
         return all_.except_(followed).order_by(Post.timestamp.desc())
@@ -106,9 +103,9 @@ class Post(db.Model):
     def hashtag(self, hashhtag):
         return hashhtag in self.hashtags
 
-
     def __repr__(self):
         return '<Post {}>'.format(self.body)
+
 
 class Com(db.Model):
     comid = db.Column(db.Integer, primary_key=True)
@@ -118,7 +115,7 @@ class Com(db.Model):
     comimage = db.Column(db.Text)
     comfileType = db.Column(db.Text)
     comauthor_id = db.Column(db.Integer, index=True)
+    comuser = db.Column(db.String(25), index=True)
 
     def __repr__(self):
         return '<Com {}>'.format(self.combody)
-

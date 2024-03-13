@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+
+{% block app_content %}
+{% include '_post.html' %}
+{% if form %}
+{{ wtf.quick_form(form) }}
+
+{% endif %}
+{% for com in composts %}
+{% include '_com.html' %}
+{% endfor %}
+

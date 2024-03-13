@@ -1,0 +1,26 @@
+<table class="table table-hover">
+    <tr>
+        <td width="70px">
+            <a href="{{ url_for('main.user', username=com.comuser) }}">
+                <img src="{{ url_for('main.avatar', user_id = com.comauthor_id) }}" width="70px"/>
+
+
+            </a>
+        </td>
+        <td>
+            <a href="{{ url_for('main.user', username=com.comuser) }}">
+                {{ com.comuser }}
+            </a>
+            sagte {{ moment(com.comtimestamp).fromNow() }}:
+            <br>
+            {{ com.combody }}
+            <br>
+            {% if com.image %}
+            <img src="{{ url_for('main.comimg', comid=com.comid) }}" width="256px" height="256px">
+            {% endif %}
+        </td>
+
+    </tr>gi
+</table>
+
+

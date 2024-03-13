@@ -1,30 +1,38 @@
-    <table class="table table-hover" frame="below" bordercolor="#B2B2B2">
-        <tr>
-            <td width="70px">
-                <a href="{{ url_for('main.user', username=post.author.username) }}">
-                    {% if post.author.avatarius %}
-                    <img src="{{ url_for('main.avatar', user_id = post.author.id) }}" width="70px"/>
-                    {% else %}
-                    <img src="https://i.pinimg.com/736x/a5/e0/ae/a5e0ae5cb13a90fc812fe33f9a10ff8a.jpg" width="70px"/>
-                    {% endif %}
-
-                </a>
-            </td>
-            <td>
-                <a href="{{ url_for('main.user', username=post.author.username) }}">
-                    {{ post.author.username }}
-                </a>
-                sagte {{ moment(post.timestamp).fromNow() }}:
-                <br>
-                {{ post.body }}
-                <br>
-                {% if post.image %}
-                <img src="{{ url_for('main.postimg', post_id = post.id) }}" width="512px">
+<table class="table table-hover" frame="below" bordercolor="#B2B2B2">
+    <tr>
+        <td width="70px">
+            <a href="{{ url_for('main.user', username=post.author.username) }}">
+                {% if post.author.avatarius %}
+                <img src="{{ url_for('main.avatar', user_id = post.author.id) }}" width="70px"/>
+                {% else %}
+                <img src="https://i.pinimg.com/736x/a5/e0/ae/a5e0ae5cb13a90fc812fe33f9a10ff8a.jpg" width="70px"/>
                 {% endif %}
-            </td>
-            <td>
-                hashtags
-            </td>
-        </tr>
-    </table>
+
+            </a>
+        </td>
+        <td>
+            <a href="{{ url_for('main.user', username=post.author.username) }}">
+                {{ post.author.username }}
+            </a>
+            sagte {{ moment(post.timestamp).fromNow() }}:
+            <br>
+            {{ post.body }}
+            <br>
+            {% if post.image %}
+            <img src="{{ url_for('main.postimg', post_id = post.id) }}" width="512px" height="512px">
+            {% endif %}
+        </td>
+        <td>
+            hashtags
+        </td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>Daumen nach vertikal | Daumen nach vertikal umgekehrt</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td>Kommentarsektion mit Mobbing</td>
+    </tr>
+</table>
 

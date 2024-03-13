@@ -38,8 +38,8 @@ data-bs-theme="dark"
 
 {% block content %}
 
-    <div class="container">
-        {% with messages = get_flashed_messages() %}
+<div class="container">
+    {% with messages = get_flashed_messages() %}
         {% if messages %}
             {% for message in messages %}
             <div class="alert alert-info" role="alert">{{ message }}</div>
@@ -48,8 +48,12 @@ data-bs-theme="dark"
         {% endwith %}
 
         {# application content needs to be provided in the app_content block #}
+        <div style="background-image:url(https://t4.ftcdn.net/jpg/03/15/29/69/360_F_315296989_HgbHte4InQQqjSBZyJ9HogEnfaPU5nJD.jpg) ;">
+        <div style="margin:35px">
         {% block app_content %}{% endblock %}
     </div>
+            </div>
+        </div>
 {% endblock %}
 
 {% block scripts %}
