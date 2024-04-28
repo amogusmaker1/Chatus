@@ -3,11 +3,10 @@ from flask import render_template, flash, redirect, url_for, request, current_ap
 from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.urls import url_parse
 from app import db
-from app.main.forms import  EditProfileForm, EmptyForm, PostForm, ComForm
-from app.models import User, Post
+from app.main.forms import EditProfileForm, EmptyForm, PostForm, ComForm
+from app.models import User, Post, Com
 from app.auth.email import send_password_reset_email
 from app.main import Bp
-
 
 
 @Bp.before_app_request
@@ -36,14 +35,14 @@ def index():
     page = request.args.get('page', 1, type=int)
     posts = current_user.followed_posts().paginate(
         page=page, per_page=current_app.config['POSTS_PER_PAGE'], error_out=False)
+
     next_url = url_for('main.index', page=posts.next_num) \
         if posts.has_next else None
     prev_url = url_for('main.index', page=posts.prev_num) \
         if posts.has_prev else None
     return render_template('index.html', title='Home', form=form,
                            posts=posts.items, next_url=next_url,
-                           prev_url=prev_url)
-
+                           prev_url=prev_url, max=max, len=len)
 
 @Bp.route('/explore')
 @login_required
@@ -56,7 +55,8 @@ def explore():
     prev_url = url_for('main.explore', page=posts.prev_num) \
         if posts.has_prev else None
     return render_template('index.html', title='Explore', posts=posts.items,
-                           next_url=next_url, prev_url=prev_url)
+                           next_url=next_url, prev_url=prev_url, max=max, len=len)
+
 
 @Bp.route('/user/<username>', methods=['GET', 'POST'])
 @login_required
@@ -83,7 +83,7 @@ def user(username):
         if posts.has_prev else None
     form = EmptyForm()
     return render_template('user.html', user=user, posts=posts.items,
-                           next_url=next_url, prev_url=prev_url, form=form, form2=form2)
+                           next_url=next_url, prev_url=prev_url, form=form, form2=form2, max=max, len=len)
 
 
 @Bp.route('/edit_profile', methods=['GET', 'POST'])
@@ -147,6 +147,7 @@ def unfollow(username):
     else:
         return redirect(url_for('main.index'))
 
+
 @Bp.route('/avatar/<user_id>')
 @login_required
 def avatar(user_id):
@@ -155,6 +156,7 @@ def avatar(user_id):
     mimetype = user.fileType
     return Response(image, mimetype=mimetype)
 
+
 @Bp.route('/postimg/<post_id>')
 @login_required
 def postimg(post_id):
@@ -162,7 +164,28 @@ def postimg(post_id):
     image = post.image
     fileType = post.fileType
     return Response(image, mimetype=fileType)
+
+
 @Bp.route('/post/<post_id>', methods=['POST', 'GET'])
 @login_required
 def compost(post_id):
-    post = Post.query.filter_by(id = int(post_id)).first_or_404()
+    post = Post.query.filter_by(id=int(post_id)).first_or_404()
+    form = ComForm()
+    if form.validate_on_submit():
+        com = Com(combody=form.compost.data, comauthor_id=current_user.id, comuser=current_user.username, compost=post)
+        if form.comimage.data:
+            com.comimage = form.comimage.data.read()
+            com.comfileType = form.comimage.data.mimetype
+        db.session.add(com)
+        db.session.commit()
+        return redirect(url_for('main.compost', post_id=post_id))
+    coms = post.coms.order_by(Com.comtimestamp.desc())
+    return render_template('compost.html', form=form, post=post, coms=coms, max=max, len=len)
+
+@Bp.route('/comimg/<com_id>')
+@login_required
+def comimg(com_id):
+    com = Com.query.get(int(com_id))
+    image = com.comimage
+    fileType = com.comfileType
+    return Response(image, mimetype=fileType)

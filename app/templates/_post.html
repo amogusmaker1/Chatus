@@ -1,4 +1,4 @@
-<table class="table table-hover" frame="below" bordercolor="#B2B2B2">
+<table width="1060px" class="table table-hover" frame="below" bordercolor="#B2B2B2">
     <tr>
         <td width="70px">
             <a href="{{ url_for('main.user', username=post.author.username) }}">
@@ -10,29 +10,46 @@
 
             </a>
         </td>
-        <td>
+        <td width="712px">
             <a href="{{ url_for('main.user', username=post.author.username) }}">
                 {{ post.author.username }}
             </a>
             sagte {{ moment(post.timestamp).fromNow() }}:
             <br>
-            {{ post.body }}
             <br>
+            {% if len(max(post.body.split(),key=len)) < 15 %}
+            <p lang="en" style="hyphens:auto;">{{ post.body }}</p>
+            {% else %}
+            <p lang="en" style="word-break:break-all;">{{ post.body }}</p>
+            {% endif %}
             {% if post.image %}
+            <br>
             <img src="{{ url_for('main.postimg', post_id = post.id) }}" width="512px" height="512px">
             {% endif %}
         </td>
-        <td>
-            hashtags
+        <td width="300px">
+            {% if post.hashtags %}
+            {{ ' #'.join(post.hashtags.split()) }}
+            {% endif %}
         </td>
     </tr>
     <tr>
         <td></td>
-        <td>Daumen nach vertikal | Daumen nach vertikal umgekehrt</td>
+        <td>
+            <table>
+        <tr>
+            <td><a href=""><img src="{{ url_for('static', filename='uplike.png') }}" width="64px" alt="Daumen nach oben"></a></td>
+            <td><a href=""><img src="{{ url_for('static', filename='downlike.png') }}" width="64px" alt="Zeigefinger nach unten"></a></td>
+            <td><a href="{{ url_for('main.compost', post_id=post.id) }}"><img src="{{ url_for('static', filename='comment.png') }}" width="64px" alt="Kommentare mit Mobbing"></a></td>
+        </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td align="center" valign="top">{{ post.coms.count() }}</td>
+                </tr>
+            </table>
+        </td>
     </tr>
-    <tr>
-        <td></td>
-        <td>Kommentarsektion mit Mobbing</td>
-    </tr>
+
 </table>
 

@@ -99,6 +99,8 @@ class Post(db.Model):
     fileType = db.Column(db.Text)
     coms = db.relationship('Com', backref='compost', lazy='dynamic')
     hashtags = db.Column(db.String(187), index=True)
+    uplike = db.Column(db.Integer, index=True)
+    downlike = db.Column(db.Integer, index=True)
 
     def hashtag(self, hashhtag):
         return hashhtag in self.hashtags

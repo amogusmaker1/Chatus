@@ -19,7 +19,7 @@ bootstrap = Bootstrap()
 moment = Moment()
 
 def creaApp(configClass=Config):
-    app = Flask(__name__)
+    app = Flask(__name__, static_folder="static")
     app.config.from_object(configClass)
     db.init_app(app)
     migrate.init_app(app, db)
