@@ -1,4 +1,4 @@
-<table width="1060px" class="table table-hover" frame="below" bordercolor="#B2B2B2">
+<table width="1060px" class="table table-hover" frame="below" bordercolor="#B2B2B2" style="font-family:Bebas">
     <tr>
         <td width="70px">
             <a href="{{ url_for('main.user', username=post.author.username) }}">
@@ -36,7 +36,7 @@
     <tr>
         <td></td>
         <td>
-            <table>
+            <table style=" width: 250px;"> <!--background-image:url({{ url_for('static', filename='paper stück.png') }}); background-size:cover;-->
         <tr>
             <td><a href=""><img src="{{ url_for('static', filename='uplike.png') }}" width="64px" alt="Daumen nach oben"></a></td>
             <td><a href=""><img src="{{ url_for('static', filename='downlike.png') }}" width="64px" alt="Zeigefinger nach unten"></a></td>
@@ -52,4 +52,3 @@
     </tr>
 
 </table>
-
