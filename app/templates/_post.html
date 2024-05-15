@@ -1,4 +1,4 @@
-<table width="1060px" class="table table-hover" frame="below" bordercolor="#B2B2B2" style="font-family:Bebas">
+<table width="1060px" class="table table-hover" frame="below" bordercolor="#B2B2B2" style="font-family:GraphikMediumItalic;" id="{{ post.id }}">
     <tr>
         <td width="70px">
             <a href="{{ url_for('main.user', username=post.author.username) }}">
@@ -29,7 +29,7 @@
         </td>
         <td width="300px">
             {% if post.hashtags %}
-            {{ ' #'.join(post.hashtags.split()) }}
+            {{ '#'+' #'.join(post.hashtags.split()) }}
             {% endif %}
         </td>
     </tr>
@@ -38,7 +38,7 @@
         <td>
             <table style=" width: 250px;"> <!--background-image:url({{ url_for('static', filename='paper stück.png') }}); background-size:cover;-->
         <tr>
-            <td><a href=""><img src="{{ url_for('static', filename='uplike.png') }}" width="64px" alt="Daumen nach oben"></a></td>
+            <td><a href="{{ url_for('main.like', post_id=post.id)) }}"><img src="{{ url_for('static', filename='uplike.png') }}" width="64px" alt="Daumen nach oben"></a></td>
             <td><a href=""><img src="{{ url_for('static', filename='downlike.png') }}" width="64px" alt="Zeigefinger nach unten"></a></td>
             <td><a href="{{ url_for('main.compost', post_id=post.id) }}"><img src="{{ url_for('static', filename='comment.png') }}" width="64px" alt="Kommentare mit Mobbing"></a></td>
         </tr>

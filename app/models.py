@@ -12,6 +12,11 @@ followers = db.Table(
     db.Column('follower_id', db.Integer, db.ForeignKey('user.id')),
     db.Column('followed_id', db.Integer, db.ForeignKey('user.id'))
 )
+likes = db.Table(
+    'likes',
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
+    db.Column('post_id', db.Integer, db.ForeignKey('post.id'))
+)
 
 
 class User(UserMixin, db.Model):
@@ -99,8 +104,22 @@ class Post(db.Model):
     fileType = db.Column(db.Text)
     coms = db.relationship('Com', backref='compost', lazy='dynamic')
     hashtags = db.Column(db.String(187), index=True)
-    uplike = db.Column(db.Integer, index=True)
-    downlike = db.Column(db.Integer, index=True)
+    likes = db.relationship(
+        'User', secondary=likes,
+        primaryjoin=(likes.c.user_id == id),
+        secondaryjoin=(likes.c.post_id == id),
+        backref=db.backref('likes', lazy='dynamic'), lazy='dynamic')
+    def like(self, user):
+        if not self.is_liked(user):
+            self.likes.append(user)
+
+    def unlike(self, user):
+        if self.is_liked(user):
+            self.likes.remove(user)
+
+    def is_liked(self, user):
+        return self.likes.filter(
+            likes.c.user_id == user.id).count() > 0
 
     def hashtag(self, hashhtag):
         return hashhtag in self.hashtags

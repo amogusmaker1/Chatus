@@ -127,6 +127,15 @@ def follow(username):
     else:
         return redirect(url_for('main.index'))
 
+@Bp.route('/like/<post_id>', methods=['POST'])
+@login_required
+def like(post_id):
+    form = EmptyForm()
+    if form.validate_on_submit():
+        post = Post.query.get(int(post_id))
+        if post is None:
+            flash('Dieser Post ist nicht mehr auf Lager(Temu)')
+
 
 @Bp.route('/unfollow/<username>', methods=['POST'])
 @login_required
