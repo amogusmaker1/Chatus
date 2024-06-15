@@ -4,7 +4,7 @@ from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.urls import url_parse
 from app import db
 from app.main.forms import EditProfileForm, EmptyForm, PostForm, ComForm
-from app.models import User, Post, Com
+from app.models import User, Post, Com, likes2, dislikes
 from app.auth.email import send_password_reset_email
 from app.main import Bp
 
@@ -127,15 +127,39 @@ def follow(username):
     else:
         return redirect(url_for('main.index'))
 
-@Bp.route('/like/<post_id>', methods=['POST'])
+@Bp.route('/like/<post_id>', methods=['POST', 'GET'])
 @login_required
 def like(post_id):
-    form = EmptyForm()
-    if form.validate_on_submit():
-        post = Post.query.get(int(post_id))
-        if post is None:
-            flash('Dieser Post ist nicht mehr auf Lager(Temu)')
+    post = Post.query.get(int(post_id))
+    if post is None:
+        flash('Dieser Post ist nicht mehr auf Lager(Temu)')
+        return redirect(url_for('main.index'))
+    if db.session.query(likes2).filter_by(user_id=current_user.id, post_id=post_id).count() > 0:
+        current_user.unlike(post)
+        db.session.commit()
+    else:
+        current_user.like(post)
+        if db.session.query(dislikes).filter_by(user_id=current_user.id, post_id=post_id).count() > 0:
+            current_user.undislike(post)
+        db.session.commit()
+    return redirect(url_for('main.index', _anchor=post_id))
 
+@Bp.route('/dislike/<post_id>', methods=['POST', 'GET'])
+@login_required
+def dislike(post_id):
+    post = Post.query.get(int(post_id))
+    if post is None:
+        flash('Dieser Post ist nicht mehr auf Lager(Temu)')
+        return redirect(url_for('main.index'))
+    if db.session.query(dislikes).filter_by(user_id=current_user.id, post_id=post_id).count() > 0:
+        current_user.undislike(post)
+        db.session.commit()
+    else:
+        current_user.dislike(post)
+        if db.session.query(likes2).filter_by(user_id=current_user.id, post_id=post_id).count() > 0:
+            current_user.unlike(post)
+        db.session.commit()
+    return redirect(url_for('main.index', _anchor=post_id))
 
 @Bp.route('/unfollow/<username>', methods=['POST'])
 @login_required

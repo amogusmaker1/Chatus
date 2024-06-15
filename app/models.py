@@ -12,8 +12,13 @@ followers = db.Table(
     db.Column('follower_id', db.Integer, db.ForeignKey('user.id')),
     db.Column('followed_id', db.Integer, db.ForeignKey('user.id'))
 )
-likes = db.Table(
-    'likes',
+likes2 = db.Table(
+    'likes2',
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
+    db.Column('post_id', db.Integer, db.ForeignKey('post.id'))
+)
+dislikes = db.Table(
+    'dislikes',
     db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
     db.Column('post_id', db.Integer, db.ForeignKey('post.id'))
 )
@@ -35,6 +40,31 @@ class User(UserMixin, db.Model):
         primaryjoin=(followers.c.follower_id == id),
         secondaryjoin=(followers.c.followed_id == id),
         backref=db.backref('followers', lazy='dynamic'), lazy='dynamic')
+    likes = db.relationship(
+        'Post', secondary=likes2)
+    dislikes = db.relationship(
+        'Post', secondary=dislikes)
+
+    def like(self, post):
+        '''if not self.is_liked(post):'''
+        self.likes.append(post)
+
+    def unlike(self, post):
+        '''if self.is_liked(post):'''
+        self.likes.remove(post)
+
+    def is_liked(self, post):
+        return db.session.query(likes2).filter_by(user_id=self.id, post_id=post.id).count() > 0
+
+    def dislike(self, post):
+        self.dislikes.append(post)
+
+    def undislike(self, post):
+        '''if self.is_liked(post):'''
+        self.dislikes.remove(post)
+
+    def is_disliked(self, post):
+        return db.session.query(dislikes).filter_by(user_id=self.id, post_id=post.id).count() > 0
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
@@ -104,28 +134,18 @@ class Post(db.Model):
     fileType = db.Column(db.Text)
     coms = db.relationship('Com', backref='compost', lazy='dynamic')
     hashtags = db.Column(db.String(187), index=True)
-    likes = db.relationship(
-        'User', secondary=likes,
-        primaryjoin=(likes.c.user_id == id),
-        secondaryjoin=(likes.c.post_id == id),
-        backref=db.backref('likes', lazy='dynamic'), lazy='dynamic')
-    def like(self, user):
-        if not self.is_liked(user):
-            self.likes.append(user)
-
-    def unlike(self, user):
-        if self.is_liked(user):
-            self.likes.remove(user)
-
-    def is_liked(self, user):
-        return self.likes.filter(
-            likes.c.user_id == user.id).count() > 0
 
     def hashtag(self, hashhtag):
         return hashhtag in self.hashtags
 
     def __repr__(self):
         return '<Post {}>'.format(self.body)
+
+    def count_likes(self):
+        return db.session.query(likes2).filter_by(post_id=self.id).count()
+
+    def count_dislikes(self):
+        return db.session.query(dislikes).filter_by(post_id=self.id).count()
 
 
 class Com(db.Model):

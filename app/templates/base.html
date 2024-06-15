@@ -1,67 +1,64 @@
 {% extends 'bootstrap/base.html' %}
 {% block title %}
-    {% if title %}{{ title }} - Chatus{% else %}Welcome to Chatus{% endif %}
+{% if title %}{{ title }} - Chatus{% else %}Welcome to Chatus{% endif %}
 {% endblock %}
 {% block body_attribs %}
-style="background-image: url('https://media.istockphoto.com/id/517903910/ru/векторная/мультяшный-карте-бесшовный-узор.jpg?s=612x612&w=0&k=20&c=IfXkqQ9XERMAq-rAbva0krSCARmUymrwtrHvWb2Gvq8=');background-size: 612, 612; background-repeat: repeat; font-size:16pt;";
+style="background-image: url('https://media.istockphoto.com/id/517903910/ru/векторная/мультяшный-карте-бесшовный-узор.jpg?s=612x612&w=0&k=20&c=IfXkqQ9XERMAq-rAbva0krSCARmUymrwtrHvWb2Gvq8=');background-size: 612, 612; background-repeat: repeat; font-size:16pt; color: #ffffff";
 data-bs-theme="dark;"
 {% endblock %}
-<style>
-    @font-face{
-        font-family: GraphikMediumItalic;
-        src: url("GraphikMediumItalic.ttf");}
-</style>
+
 {% block navbar %}
-    <nav class="navbar navbar-default" >
-        <div class="container" data-bs-theme="dark">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="{{ url_for('main.index') }}">Chatus</a>
-            </div>
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav">
-                    <li><a href="{{ url_for('main.index') }}">Die Hood</a></li>
-                    <li><a href="{{ url_for('main.explore') }}">Entdecken</a></li>
-                </ul>
-                <ul class="nav navbar-nav navbar-right">
-                    {% if current_user.is_anonymous %}
-                    <li><a href="{{ url_for('auth.login') }}">Login</a></li>
-                    {% else %}
-                    <li><a href="{{ url_for('main.user', username=current_user.username) }}">Profil</a></li>
-                    <li><a href="{{ url_for('auth.logout') }}">Ausloggen</a></li>
-                    {% endif %}
-                </ul>
-            </div>
+<nav class="navbar navbar-default">
+    <div class="container" data-bs-theme="dark">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="{{ url_for('main.index') }}">Chatus</a>
         </div>
-    </nav>
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li><a href="{{ url_for('main.index') }}">Die Hood</a></li>
+                <li><a href="{{ url_for('main.explore') }}">Entdecken</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                {% if current_user.is_anonymous %}
+                <li><a href="{{ url_for('auth.login') }}">Login</a></li>
+                {% else %}
+                <li><a href="{{ url_for('main.user', username=current_user.username) }}">Profil</a></li>
+                <li><a href="{{ url_for('auth.logout') }}">Ausloggen</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
 {% endblock %}
 
 {% block content %}
 
 <div class="container">
     {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            {% for message in messages %}
-            <div class="alert alert-info" role="alert">{{ message }}</div>
-            {% endfor %}
-        {% endif %}
-        {% endwith %}
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-info" role="alert">{{ message }}</div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
 
-        {# application content needs to be provided in the app_content block #}
-        <div style="background-image:url(https://t4.ftcdn.net/jpg/03/15/29/69/360_F_315296989_HgbHte4InQQqjSBZyJ9HogEnfaPU5nJD.jpg) ;">
+    {# application content needs to be provided in the app_content block #}
+    <div style="background-image:url(https://i.pinimg.com/564x/b0/f2/ac/b0f2acb61b9a6546287fe63b1405e9d6.jpg) ;">
         <div style="margin:35px">
-        <div style="font-family: GraphikMediumItalic;">{% block app_content %}{% endblock %}</div>
-    </div>
-            </div>
+            <div style="font-family: Raleway;">{% block app_content %}{% endblock %}</div>
         </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
-    {{ super() }}
-    {{ moment.include_moment() }}
+{{ super() }}
+{{ moment.include_moment() }}
 {% endblock %}

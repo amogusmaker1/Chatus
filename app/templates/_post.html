@@ -1,4 +1,5 @@
-<table width="1060px" class="table table-hover" frame="below" bordercolor="#B2B2B2" style="font-family:GraphikMediumItalic;" id="{{ post.id }}">
+<table width="1060px" class="table" frame="below" bordercolor="#B2B2B2"
+       id="{{ post.id }}">
     <tr>
         <td width="70px">
             <a href="{{ url_for('main.user', username=post.author.username) }}">
@@ -36,16 +37,38 @@
     <tr>
         <td></td>
         <td>
-            <table style=" width: 250px;"> <!--background-image:url({{ url_for('static', filename='paper stück.png') }}); background-size:cover;-->
-        <tr>
-            <td><a href="{{ url_for('main.like', post_id=post.id)) }}"><img src="{{ url_for('static', filename='uplike.png') }}" width="64px" alt="Daumen nach oben"></a></td>
-            <td><a href=""><img src="{{ url_for('static', filename='downlike.png') }}" width="64px" alt="Zeigefinger nach unten"></a></td>
-            <td><a href="{{ url_for('main.compost', post_id=post.id) }}"><img src="{{ url_for('static', filename='comment.png') }}" width="64px" alt="Kommentare mit Mobbing"></a></td>
-        </tr>
+            <table>
+                <!--background-image:url({{ url_for('static', filename='paper stück.png') }}); background-size:cover;-->
+                <tr>
+                    {% if current_user.is_liked(post) %}
+                    <td><a href="{{ url_for('main.like', post_id=post.id) }}"><img
+                            src="{{ url_for('static', filename='uplike aktiv.png') }}" width="64px"
+                            alt="Daumen nach oben"></a></td>
+                    {% else %}
+                    <td><a href="{{ url_for('main.like', post_id=post.id) }}"><img
+                            src="{{ url_for('static', filename='uplike.png') }}" width="64px"
+                            alt="Daumen nach oben"></a></td>
+                    {% endif %}
+                    <td width="30px">{{ post.count_likes() }}</td>
+                    {% if current_user.is_disliked(post) %}
+                    <td><a href="{{ url_for('main.dislike', post_id=post.id) }}"><img
+                            src="{{ url_for('static', filename='downlike AKTIV.png') }}" width="64px"
+                            alt="Zeigefinger nach unten"></a></td>
+                    {% else %}
+                    <td><a href="{{ url_for('main.dislike', post_id=post.id) }}"><img
+                            src="{{ url_for('static', filename='downlike.png') }}" width="64px"
+                            alt="Zeigefinger nach unten"></a></td>
+                    {% endif %}
+                    <td width="30px">{{ post.count_dislikes() }}</td>
+                    <td><a href="{{ url_for('main.compost', post_id=post.id) }}"><img
+                            src="{{ url_for('static', filename='comment.png') }}" width="64px"
+                            alt="Kommentare mit Mobbing"></a></td>
+                    <td width="75px">{{ post.coms.count() }}</td>
+                </tr>
                 <tr>
                     <td></td>
                     <td></td>
-                    <td align="center" valign="top">{{ post.coms.count() }}</td>
+                    <td align="center" valign="top"></td>
                 </tr>
             </table>
         </td>
